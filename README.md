@@ -51,6 +51,49 @@ Coopanion 的扩展目录是 `<data>/extensions`,**不是**它的程序目录 �
 
 装完把部署 `config.json` 里 `worlds.figure-persona.enabled` 设成 `true`(或在 World 页打开),重启进程。
 
+## 日常使用
+
+装好并启用之后,平时只有一件事要做:**改完形象或人格,点一次「重载系统前缀」**。
+
+1. **给某个形象写人格** —— 打开 `<data>/figures/<id>/figure.json`,加一个 `persona` 字段:
+
+```json
+"persona": "说话像朋友,不像客服:能短就短,一次一两句;不懂就说不懂,不装懂。"
+```
+
+   也可以按语言分开写(界面语言是简体中文时取 `zh`):
+
+```json
+"persona": { "zh": "…", "en": "…" }
+```
+
+2. **换形象** —— 在装扮页换。`figure` 留空时,下一次前缀重建就读新形象的 `figure.json`;想让某个形象固定生效,把配置项 `figure` 填成它的 id。
+
+3. **让当前会话读到新内容** —— `http://127.0.0.1:<web 端口>`(本机是 17788) → 左侧「World 总览」→「形象人格」→「↻ 重载系统前缀」。
+   不点也行,但要等上下文交接或重开会话 —— 普通对话不会重算前缀。
+
+### 换掉注入的措辞本身
+
+模板也能覆盖,不用改包源码(升级不丢)。在部署目录放一份:
+
+```text
+<botDir>/worlds/figure-persona/ENV_PROMPT.md
+```
+
+本机是 `C:\Users\rog\AppData\Local\Programs\Coopanion\data\home\companion\worlds\figure-persona\ENV_PROMPT.md`,内容照抄 `src/ENV_PROMPT.md` 再改。
+优先级:部署覆盖 > 包目录里的 `worlds/figure-persona/ENV_PROMPT.md` > 本包 `src/ENV_PROMPT.md`。
+
+### 怎么确认生效
+
+- World 总览的「形象人格」卡片直接显示当前渲染出来的环境段。
+- `GET http://127.0.0.1:<web 端口>/api/prompts/prefix`,找 `ENVIRONMENT · figure-persona` 那段。
+- 直接问桌宠「你现在是什么形象」,它会调 `figure_persona_current`。
+
+### 一个已知边界
+
+内置形象 `coo`、`whale` 的文件在 desktop-pet 包自己的 `web/` 下,不在 `<data>/figures/` 里 ——
+`figure` 填这两个 id 时读不到 `figure.json`,只会显示缺省文案。`figure` 留空(跟随装扮页)最省心。
+
 ## 验证
 
 ```bash
