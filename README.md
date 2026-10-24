@@ -1,8 +1,47 @@
-# cortico-world-figure-persona
+# 🐉 cortico-world-figure-persona
 
 给 Coopanion 的桌宠形象接上人格。**换外观不等于换人格** —— 这个 World 让「谁在说话」和「它长什么样」可以分别设置、由同一次点击对齐。
 
 它只往系统前缀的环境段注入文本：不动形象包的美术，不执行形象包的代码，不写 `CONSTITUTION.md`。
+
+*Cortico World · `kind: world` · `api: 6` · `tags: external-setup / experimental` · MIT · Coopanion 0.2.8 实测*
+
+## 目录
+
+- [为什么需要它](#为什么需要它)
+- [适用范围](#适用范围)
+- [它接的是哪一段](#它接的是哪一段)
+- [工作边界](#工作边界)
+- [它读什么](#它读什么)
+- [环境段长什么样](#环境段长什么样)
+- [安装](#安装)
+- [图形面板](#图形面板)
+- [手工路径](#手工路径)
+- [参数](#参数)
+- [工具与事件](#工具与事件)
+- [验证到哪一级](#验证到哪一级)
+- [实测记录](#实测记录)
+- [已知边界](#已知边界)
+- [许可](#许可)
+
+## 为什么需要它
+
+形象包决定「长什么样」，人格由 `CONSTITUTION.md` 决定 —— 两者原本各管各的，换形象不会换语气。
+
+| 没有它 | 有它 |
+| --- | --- |
+| 装了十个形象，说话永远是同一个人 | 每个形象带自己的人格式，换谁像谁 |
+| 想换语气得手改 `CONSTITUTION.md`，覆盖原有设定，还得重开会话 | 人格写在形象包里，跟着形象走；改完点一次「确定并生效」 |
+| 形象包作者想附一段人设，没地方放 | `figure.json` 加一个 `persona` 字段即可，不用改 Coopanion |
+
+## 适用范围
+
+| | |
+| --- | --- |
+| ✅ **该用** | 你有多个形象包，想让它们各有各的说话样子；或者你在做形象包，想附带一份人设 |
+| ✅ **也用得上** | 只想给某个形象临时换个语气，又不想动 `CONSTITUTION.md` |
+| ⚠️ **不必用** | 只有一个形象、从不换语气；或者你要改的是「AI 本身是谁」—— 那是 `CONSTITUTION.md` 的事 |
+| 📦 **前提** | 宿主 Coopanion 0.2.8+，且 `<data>/figures/` 下至少有一个自定义形象包 |
 
 ## 它接的是哪一段
 
@@ -50,17 +89,57 @@ Coopanion 里跟「我是谁」有关的东西分三层，本包只接中间一�
 模板可覆盖，不用改包源码（升级不丢）：在部署目录放 `<botDir>/worlds/figure-persona/ENV_PROMPT.md`。
 优先级：部署覆盖 > 包目录里的 `worlds/figure-persona/ENV_PROMPT.md` > 本包 `src/ENV_PROMPT.md`。
 
-## 配置项
+## 安装
 
-| 路径 | 默认 | 作用 |
-|---|---|---|
-| `worlds.figure-persona.enabled` | `false` | 挂载开关。Coopanion 只声明它自带的三个 World，新装的扩展 World 默认关 |
-| `worlds.figure-persona.field` | `persona` | 人格正文在 `figure.json` 里的字段名 |
-| `worlds.figure-persona.figure` | 空 | 固定用某个形象包；留空时跟随宿主正在显示的那个 |
+### 前置条件
 
-三项都带 `x-hot`，在配置页改完即时进内存，不用重启。
+| 项目 | 要求 |
+| --- | --- |
+| 宿主 | Coopanion 0.2.8+（Cortico 扩展 api 6） |
+| 形象包 | `manifest: 2` / `api: 2`，落在 `<data>/figures/<id>/` |
+| Node | 22+（`corepack` 随 Node 提供，`pnpm` 不用单独装） |
 
-## 图形面板：选形象、改人格、一次点击生效
+扩展目录是 `<data>/extensions`，**不是**程序目录 —— 实例把 data 目录当作 Cortico 的检出根（本机实测 `%LOCALAPPDATA%\Programs\Coopanion\data\extensions`，可用 `CORTICO_EXTENSIONS_DIR` 改）。装之前先看运行中实例 `GET /api/extensions` 返回的 `dir` 字段，以它为准，别按源码注释猜路径。
+
+### 1 · 装进扩展目录
+
+两种装法选一个：
+
+- **WebUI**：「扩展」页 → 手动安装 → 选本机目录，指到这个包（link 方式，改源码后重启生效）。
+- **命令行**：`cd <该目录> && corepack pnpm add <本包绝对路径>`。
+
+### 2 · 激活 World
+
+部署 `config.json` 里 `worlds.figure-persona.enabled` 设成 `true`，或在 World 总览页点「激活 World」。
+
+Coopanion 只声明它自带的三个 World，新装的扩展 World 默认是关的 —— **装 ≠ 启用**。
+
+### 3 · 给它写人格
+
+打开 `<data>/figures/<id>/figure.json`，加一个 `persona` 字段：
+
+```json
+"persona": "说话像朋友,不像客服:能短就短,一次一两句;不懂就说不懂,不装懂。"
+```
+
+不想手改就用[图形面板](#图形面板)，选形象、改文本、一次点击写回。
+
+### 4 · 装完自检
+
+```bash
+# 扩展是否被识别（看 state=loaded、enabled=true、webUi=served）
+curl -s "http://127.0.0.1:<web 端口>/api/extensions"
+
+# 环境段是否进了系统前缀（找 ENVIRONMENT · figure-persona）
+curl -s "http://127.0.0.1:<web 端口>/api/prompts/prefix"
+
+# World 是否 active
+curl -s "http://127.0.0.1:<web 端口>/api/worlds"
+```
+
+Web 端口在实例启动日志里，或用 `netstat -ano | findstr LISTENING` 找 —— 本机是 17788，别当常量。
+
+## 图形面板
 
 入口：`http://127.0.0.1:<web 端口>`（本机 17788）→ 左侧「World 总览」→「形象人格」→「详情」→ 页签「形象与人格」。
 也可以直接开 `http://127.0.0.1:<web 端口>/#/provider/world:figure-persona`。
@@ -90,29 +169,12 @@ curl -s -X POST "http://127.0.0.1:17788/api/webui/providers/world%3Afigure-perso
   -H "content-type: application/json" -d "{\"args\":[{\"figure\":\"gpt-niang\",\"persona\":\"说话短一点。\"}]}"
 ```
 
-## 装到 Coopanion 上
+## 手工路径
 
-扩展目录是 `<data>/extensions`，**不是**程序目录 —— 实例把 data 目录当作 Cortico 的检出根
-（本机实测 `%LOCALAPPDATA%\Programs\Coopanion\data\extensions`，可用 `CORTICO_EXTENSIONS_DIR` 改）。
-装之前先看运行中实例 `GET /api/extensions` 返回的 `dir` 字段，以它为准，别按源码注释猜路径。
+不用面板时三步：
 
-两种装法：
-
-1. WebUI「扩展」页 → 手动安装 → 选本机目录，指到这个包（link 方式，改源码后重启生效）。
-2. 命令行：`cd <该目录> && corepack pnpm add <本包绝对路径>`。
-
-装完把部署 `config.json` 里 `worlds.figure-persona.enabled` 设成 `true`（或在 World 总览页点「激活 World」），重启进程。
-
-## 手工路径（不用面板时）
-
-1. **给形象写人格** —— 打开 `<data>/figures/<id>/figure.json`，加一个 `persona` 字段：
-
-```json
-"persona": "说话像朋友,不像客服:能短就短,一次一两句;不懂就说不懂,不装懂。"
-```
-
+1. **给形象写人格** —— 打开 `<data>/figures/<id>/figure.json`，加 `persona`（见[安装](#安装)第 3 步）。
 2. **换形象** —— 在装扮页换。`figure` 留空时，下一次前缀重建就读新形象的 `figure.json`。
-
 3. **让当前会话读到新内容** —— World 总览 →「形象人格」→「↻ 重载系统前缀」。不点也行，但要等上下文交接或重开会话：普通对话轮次不会重算前缀。
 
 ### 怎么确认生效
@@ -121,10 +183,22 @@ curl -s -X POST "http://127.0.0.1:17788/api/webui/providers/world%3Afigure-perso
 - `GET http://127.0.0.1:<web 端口>/api/prompts/prefix`，找 `ENVIRONMENT · figure-persona` 那一段。
 - 问桌宠「你现在是什么形象」，它会调 `figure_persona_current`。
 
+## 参数
+
+| 参数 | 默认 | 作用 |
+| --- | :---: | --- |
+| `worlds.figure-persona.enabled` | `false` | 挂载开关。Coopanion 只声明自带的三个 World，扩展 World 默认关 |
+| `worlds.figure-persona.field` | `persona` | 人格正文在 `figure.json` 里的字段名 |
+| `worlds.figure-persona.figure` | 空 | 固定用某个形象包；留空时跟随宿主正在显示的那个 |
+
+三项都带 `x-hot`，在配置页改完即时进内存，不用重启。
+
 ## 工具与事件
 
-- `figure_persona_current`：报当前形象、人格取自哪个字段、共多少字。不改任何文件。
-- `figure_persona.mounted`：挂载时投一条，说明读到了什么。
+| 名称 | 类型 | 说明 |
+| --- | --- | --- |
+| `figure_persona_current` | 工具 | 报当前形象、人格取自哪个字段、共多少字。不改任何文件 |
+| `figure_persona.mounted` | 事件 | 挂载时投一条，说明读到了什么 |
 
 ## 验证到哪一级
 
@@ -155,9 +229,9 @@ corepack pnpm check:extension <本包目录>
 
 **自检通过不等于验收。** 本包当前状态：可试用，待开发者验收 —— 面板文案与默认 persona 措辞都还可以改。
 
-## 实测记录（2026-10-24，Coopanion 0.2.8）
+## 实测记录
 
-`GET /api/prompts/prefix` 返回的第 19 段：
+2026-10-24，Coopanion 0.2.8。`GET /api/prompts/prefix` 返回的第 19 段：
 
 ```text
 ENVIRONMENT · figure-persona   sourceKey=worlds.figure-persona.envPrompt   153 字符
@@ -169,10 +243,10 @@ ENVIRONMENT · figure-persona   sourceKey=worlds.figure-persona.envPrompt   153 
 
 该接口与真实前缀用同一份组装代码现拼（`build/cortico/src/web/server.ts` 的 `/api/prompts/prefix` 走 `assembleSystemSegments`），所以这就是模型看到的那一段。
 
-## 未覆盖 / 已知边界
+## 已知边界
 
 - **内置形象读不到。** `coo`、`whale` 的文件在 desktop-pet 包自己的 `web/` 下，不在 `<data>/figures/` 里；`figure` 填这两个 id 时只会用缺省文案。留空（跟随装扮页）最省心。
-- **外观不同步。** 见「两个例外」第一条。
+- **外观不同步。** 见[图形面板](#图形面板)的两个例外第一条。
 - **人格长度吃前缀预算。** persona 直接进系统前缀，越长每轮越贵。建议一两句。
 - **WebUI 端口浮动。** 本机是 17788，换机器请从实例启动日志或 `netstat` 找实际端口。
 - **没有做单元测试隔离宿主。** 测试用临时目录造 `config.json` 与 `figure.json`，不碰真实部署。
