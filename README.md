@@ -139,7 +139,7 @@ curl -s -X POST "http://127.0.0.1:17788/api/webui/providers/world%3Afigure-perso
 
 ```bash
 corepack pnpm install
-corepack pnpm build        # 生成 dist/webui.js（面板的浏览器产物，不进 git）
+corepack pnpm build        # 重新生成 dist/webui.js（面板的浏览器产物，随仓库提交）
 corepack pnpm typecheck
 corepack pnpm test         # 16 项：干装载、读宿主形象、语言对象取值、配置覆盖、缺包兜底、模板渲染、兜底文案、工具回执、挂载事件、面板 state/apply 五项
 ```
@@ -151,7 +151,7 @@ corepack pnpm describe:extension <本包目录>
 corepack pnpm check:extension <本包目录>
 ```
 
-发布前 `prepublishOnly` 会自动 `pnpm build`；`files` 白名单带 `dist/`，`.gitignore` 忽略它。
+`dist/webui.js` 进仓库也进 npm 包 —— 无论从 npm 还是从 git 装，面板都要有产物。发布前 `prepublishOnly` 会自动再 build 一次兜底。改了 `src/webui/client.ts` 就 `pnpm build` 后一起提交，否则线上还是旧面板。
 
 **自检通过不等于验收。** 本包当前状态：可试用，待开发者验收 —— 面板文案与默认 persona 措辞都还可以改。
 
