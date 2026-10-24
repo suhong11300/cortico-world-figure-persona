@@ -51,9 +51,24 @@ export function hostFigureId(botDir: string): string {
   return typeof figure === 'string' && FIGURE_ID.test(figure) ? figure : '';
 }
 
-/** 人格字段的取值：字符串直接用；对象取 text / about / prompt 里第一个非空字符串。 */
-function personaText(value: unknown): string {
+/** 语言对象取值：先 zh、再 en、再任意非空字符串。宿主 figure.json 的 name/about 都是这个形状。 */
+function localizedText(value: unknown): string {
   if (typeof value === 'string') return value.trim();
+  if (value !== null && typeof value === 'object') {
+    const record = value as Record<string, unknown>;
+    for (const key of ['zh', 'en']) {
+      const candidate = record[key];
+      if (typeof candidate === 'string' && candidate.trim() !== '') return candidate.trim();
+    }
+    for (const candidate of Object.values(record)) {
+      if (typeof candidate === 'string' && candidate.trim() !== '') return candidate.trim();
+    }
+  }
+  return '';
+}
+
+/** 人格字段的取值：对象先认 text / about / prompt，其余交给语言对象规则。 */
+function personaText(value: unknown): string {
   if (value !== null && typeof value === 'object') {
     const record = value as Record<string, unknown>;
     for (const key of ['text', 'about', 'prompt']) {
@@ -61,7 +76,7 @@ function personaText(value: unknown): string {
       if (typeof candidate === 'string' && candidate.trim() !== '') return candidate.trim();
     }
   }
-  return '';
+  return localizedText(value);
 }
 
 /** 读一个形象包：只用到 id、name 与人格字段，其余字段原样不碰。 */
@@ -70,7 +85,7 @@ export function readFigure(dataDir: string, figure: string, field: string): Figu
   const manifest = readJson(join(dataDir, 'figures', figure, 'figure.json'));
   if (manifest === null || typeof manifest !== 'object') return { id: figure, name: figure, persona: '', field: '' };
   const record = manifest as Record<string, unknown>;
-  const name = typeof record.name === 'string' && record.name.trim() !== '' ? record.name.trim() : figure;
+  const name = localizedText(record.name) || figure;
   const persona = personaText(record[field]);
   return { id: figure, name, persona, field: persona === '' ? '' : field };
 }

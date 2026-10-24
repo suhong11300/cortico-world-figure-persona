@@ -40,8 +40,10 @@
 
 ## 装到 Coopanion 上
 
-Coopanion 的扩展目录是它自己那份 Cortico 仓库下的 `extensions/`
-(`<Coopanion>/resources/app/build/cortico/extensions`,或由 `CORTICO_EXTENSIONS_DIR` 指定的位置)。
+Coopanion 的扩展目录是 `<data>/extensions`,**不是**它的程序目录 —— 实例把 data 目录当作 Cortico 的检出根
+(本机实测:`C:\Users\rog\AppData\Local\Programs\Coopanion\data\extensions`;可由 `CORTICO_EXTENSIONS_DIR` 改)。
+装之前先开着的实例里 `GET /api/extensions` 看 `dir` 字段,以它为准。
+
 两种装法:
 
 1. WebUI「扩展」页 → 手动安装 → 选本机目录,指到这个包的目录(link 方式,改源码后重启生效)。
@@ -54,7 +56,7 @@ Coopanion 的扩展目录是它自己那份 Cortico 仓库下的 `extensions/`
 ```bash
 corepack pnpm install
 corepack pnpm typecheck
-corepack pnpm test          # 9 项:干装载、读宿主形象、配置覆盖、缺包兜底、模板渲染、工具回执、挂载事件
+corepack pnpm test          # 11 项:干装载、读宿主形象、语言对象取值、配置覆盖、缺包兜底、模板渲染、兜底文案、工具回执、挂载事件
 ```
 
 在 Cortico 检出根下另跑官方校验(两项都要过):
@@ -63,6 +65,20 @@ corepack pnpm test          # 9 项:干装载、读宿主形象、配置覆盖�
 corepack pnpm describe:extension <本包目录>   # 生成 describe.json
 corepack pnpm check:extension <本包目录>
 ```
+
+## 实测记录(2026-10-24,Coopanion 0.2.8)
+
+装进实例并启用后,`GET http://127.0.0.1:<web 端口>/api/prompts/prefix` 返回的分段里出现:
+
+```text
+ENVIRONMENT · figure-persona   sourceKey=worlds.figure-persona.envPrompt   153 字符
+
+## figure-persona
+你现在的外形是「GPT娘 · 白龙（母本重构版）」(形象包 id:gpt-niang)。外形只说明你此刻的样子,不改变你是谁。
+我是白龙 GPT娘,住在你屏幕底边。说话像朋友,不像客服:能短就短,一次一两句;不懂就说不懂,不装懂。句末偶尔带个「呀」「呢」,不堆感叹号。
+```
+
+该接口用与真实前缀同一份组装代码现拼(见 `build/cortico/src/web/server.ts` 的 `/api/prompts/prefix`),所以它就是模型看到的那一段。
 
 ## 边界
 

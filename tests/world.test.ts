@@ -54,6 +54,22 @@ describe('形象人格 World', () => {
     expect(vars['figure_persona.persona']).toBe('说话轻声细语。');
   });
 
+  it('name 与 persona 写成语言对象时按 zh 取,不退回 id', async () => {
+    seedHost('gpt-niang', {
+      name: { zh: 'GPT娘 · 白龙', en: 'GPT White Dragon' },
+      persona: { zh: '说话像朋友。', en: 'Like a friend.' },
+    });
+    const vars = await varsOf(FIGURE_PERSONA.create(ctxOf()));
+    expect(vars['figure_persona.name']).toBe('GPT娘 · 白龙');
+    expect(vars['figure_persona.persona']).toBe('说话像朋友。');
+  });
+
+  it('persona 对象里的 text 优先于语言键', async () => {
+    seedHost('gpt-niang', { name: 'GPT 娘', persona: { text: '先看这里。', zh: '不该用这句。' } });
+    const vars = await varsOf(FIGURE_PERSONA.create(ctxOf()));
+    expect(vars['figure_persona.persona']).toBe('先看这里。');
+  });
+
   it('配置里指定 figure 时压过宿主配置', async () => {
     seedHost('gpt-niang', { name: 'GPT 娘', persona: 'A' });
     mkdirSync(join(dataDir, 'figures', 'whale'), { recursive: true });
