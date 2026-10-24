@@ -1,0 +1,38 @@
+{
+  "tools": [
+    {
+      "name": "figure_persona_current",
+      "description": "Report which figure pack the host is showing and whether it carries persona text.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "required": []
+      },
+      "tags": [
+        "read"
+      ],
+      "summary": {
+        "zh": "报当前正在显示的形象包,以及它有没有携带人格文本。",
+        "en": "Reports the figure pack the host is showing and whether it carries persona text."
+      }
+    }
+  ],
+  "events": [
+    {
+      "type": "figure_persona.mounted",
+      "description": {
+        "zh": "World 挂载完成,附当前形象与人格文本的来源。",
+        "en": "The World was mounted, with the current figure and where its persona text came from."
+      }
+    }
+  ],
+  "prompts": [
+    {
+      "key": "worlds.figure-persona.envPrompt",
+      "title": "形象人格 · 环境提示词",
+      "role": "envPrompt",
+      "content": "你现在的外形是「{{figure_persona.name}}」(形象包 id:{{figure_persona.figure}})。外形只说明你此刻的样子,不改变你是谁。\n{{figure_persona.persona | 这个形象包没有携带人格文本,保持你原本的人设即可。}}\n"
+    }
+  ]
+}
