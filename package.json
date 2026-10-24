@@ -4,6 +4,7 @@
   "type": "module",
   "description": "给 Coopanion 形象包绑定人格：把当前形象的人格注入环境提示词",
   "license": "MIT",
+  "author": "苏鸿与维基 (suhong11300)",
   "keywords": [
     "cortico-world",
     "cortico",
@@ -28,6 +29,7 @@
     "src",
     "README.md",
     "CHANGELOG.md",
+    "LICENSE",
     "describe.json"
   ],
   "scripts": {
