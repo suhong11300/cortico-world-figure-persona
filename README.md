@@ -93,7 +93,7 @@ curl -s -X POST "http://127.0.0.1:17788/api/webui/providers/world%3Afigure-perso
 ## 装到 Coopanion 上
 
 扩展目录是 `<data>/extensions`，**不是**程序目录 —— 实例把 data 目录当作 Cortico 的检出根
-（本机实测 `C:\Users\rog\AppData\Local\Programs\Coopanion\data\extensions`，可用 `CORTICO_EXTENSIONS_DIR` 改）。
+（本机实测 `%LOCALAPPDATA%\Programs\Coopanion\data\extensions`，可用 `CORTICO_EXTENSIONS_DIR` 改）。
 装之前先看运行中实例 `GET /api/extensions` 返回的 `dir` 字段，以它为准，别按源码注释猜路径。
 
 两种装法：
