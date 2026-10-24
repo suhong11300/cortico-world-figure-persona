@@ -12,6 +12,9 @@ export const FIGURE_PERSONA: WorldDefinition<FigurePersonaConfigSection> = {
     timezone: ctx.timezone,
     botDir: ctx.botDir,
     dataDir: ctx.dataDir,
+    // 面板「确定并生效」走这两条:写回 worlds.figure-persona 活引用,再重建本 World。
+    persist: (patch) => ctx.persist(patch),
+    restart: () => ctx.restart(),
   }),
   describe: {
     tools: describeTools(FIGURE_PERSONA_TOOL_DECLS, {

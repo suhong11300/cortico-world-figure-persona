@@ -19,6 +19,7 @@
   "cortico": {
     "kind": "world",
     "api": 6,
+    "webUiClient": "dist/webui.js",
     "tags": [
       "external-setup",
       "experimental"
@@ -27,18 +28,22 @@
   },
   "files": [
     "src",
+    "dist",
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
     "describe.json"
   ],
   "scripts": {
+    "build": "node scripts/build-webui.mjs",
+    "prepublishOnly": "node scripts/build-webui.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
     "cortico": "^0.2.6",
+    "esbuild": "^0.28.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
