@@ -5,11 +5,22 @@
   "description": "给 Coopanion 形象包绑定人格：把当前形象的人格注入环境提示词",
   "license": "MIT",
   "author": "苏鸿与维基 (suhong11300)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/suhong11300/cortico-world-figure-persona.git"
+  },
+  "homepage": "https://github.com/suhong11300/cortico-world-figure-persona#readme",
+  "bugs": {
+    "url": "https://github.com/suhong11300/cortico-world-figure-persona/issues"
+  },
   "keywords": [
     "cortico-world",
     "cortico",
     "coopanion",
-    "desktop-pet"
+    "desktop-pet",
+    "figure-pack",
+    "persona",
+    "system-prompt"
   ],
   "engines": {
     "node": ">=22"
