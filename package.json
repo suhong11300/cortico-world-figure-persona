@@ -1,8 +1,8 @@
 {
   "name": "cortico-world-figure-persona",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
-  "description": "给 Coopanion 形象包挂上多档人设：一个形象几档人格，一键切换，形象包更新不冲掉",
+  "description": "为一个形象挂载多档人设。切换无需重装形象包；人设独立存储，更新形象不覆盖；切换后即时生效。",
   "license": "MIT",
   "author": "苏鸿与维基 (suhong11300)",
   "repository": {
@@ -42,11 +42,11 @@
     "locales": {
       "zh": {
         "displayName": "形象人格",
-        "description": "给一个形象挂多档人设:切换人设不用重装形象包,形象包更新也不冲掉你写的人格。"
+        "description": "为一个形象挂载多档人设。切换无需重装形象包；人设独立存储，更新形象不覆盖；切换后即时生效。"
       },
       "en": {
         "displayName": "Figure Persona",
-        "description": "Several personas per figure: switch without touching the figure pack, and keep your wording when the pack updates."
+        "description": "Attaches multiple personas to a single figure. Switching needs no reinstall; personas are stored outside the figure pack and survive pack updates; changes take effect immediately."
       }
     }
   },
