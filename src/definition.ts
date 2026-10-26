@@ -19,8 +19,12 @@ export const FIGURE_PERSONA: WorldDefinition<FigurePersonaConfigSection> = {
   describe: {
     tools: describeTools(FIGURE_PERSONA_TOOL_DECLS, {
       figure_persona_current: {
-        zh: '报当前正在显示的形象包,以及它有没有携带人格文本。',
-        en: 'Reports the figure pack the host is showing and whether it carries persona text.',
+        zh: '报当前正在显示的形象包、生效的人设档,以及这个形象一共有几档。',
+        en: 'Reports the figure pack in use, the persona profile in effect, and how many profiles the figure has.',
+      },
+      figure_persona_switch: {
+        zh: '切到当前形象的另一档人设,或换一个已装形象,然后重载系统前缀。',
+        en: 'Switches to another persona profile of the current figure, or to another installed figure, then reloads the system prefix.',
       },
     }),
     events: [

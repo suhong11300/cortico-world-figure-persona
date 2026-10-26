@@ -2,7 +2,7 @@
   "tools": [
     {
       "name": "figure_persona_current",
-      "description": "Report which figure pack the host is showing and whether it carries persona text.",
+      "description": "Report the figure pack the host is showing, the persona profile in effect, and how many profiles exist.",
       "parameters": {
         "type": "object",
         "additionalProperties": false,
@@ -13,8 +13,34 @@
         "read"
       ],
       "summary": {
-        "zh": "报当前正在显示的形象包,以及它有没有携带人格文本。",
-        "en": "Reports the figure pack the host is showing and whether it carries persona text."
+        "zh": "报当前正在显示的形象包、生效的人设档,以及这个形象一共有几档。",
+        "en": "Reports the figure pack in use, the persona profile in effect, and how many profiles the figure has."
+      }
+    },
+    {
+      "name": "figure_persona_switch",
+      "description": "Switch to another persona profile of the current figure pack, or to another installed figure, then reload the system prefix.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "figure": {
+            "type": "string",
+            "description": "Figure pack id; omit to keep the current one."
+          },
+          "profile": {
+            "type": "string",
+            "description": "Persona profile name; omit to use the profile already in effect."
+          }
+        },
+        "required": []
+      },
+      "tags": [
+        "write"
+      ],
+      "summary": {
+        "zh": "切到当前形象的另一档人设,或换一个已装形象,然后重载系统前缀。",
+        "en": "Switches to another persona profile of the current figure, or to another installed figure, then reloads the system prefix."
       }
     }
   ],
@@ -32,7 +58,7 @@
       "key": "worlds.figure-persona.envPrompt",
       "title": "形象人格 · 环境提示词",
       "role": "envPrompt",
-      "content": "你现在的外形是「{{figure_persona.name}}」(形象包 id:{{figure_persona.figure}})。外形只说明你此刻的样子,不改变你是谁。\n{{figure_persona.persona | 这个形象包没有携带人格文本,保持你原本的人设即可。}}\n"
+      "content": "你现在的外形是「{{figure_persona.name}}」(形象包 id:{{figure_persona.figure}})。外形只说明你此刻的样子,不改变你是谁。\n{{figure_persona.persona | 这个形象包没有携带人格文本,保持你原本的人设即可。}}\n当前人设档:{{figure_persona.profile | 未设档}}(全部档:{{figure_persona.profiles | 无}})。换档只换说话的样子,不换你是谁。\n"
     }
   ]
 }
