@@ -1,4 +1,9 @@
-# 🐉 cortico-world-figure-persona
+# 形象人格 · cortico-world-figure-persona
+
+[![npm](https://img.shields.io/npm/v/cortico-world-figure-persona?label=npm&color=cb3837)](https://www.npmjs.com/package/cortico-world-figure-persona)
+[![license](https://img.shields.io/npm/l/cortico-world-figure-persona?color=blue)](./LICENSE)
+[![node](https://img.shields.io/badge/node-%E2%89%A5%2022-43853d)](https://nodejs.org)
+[![world api](https://img.shields.io/badge/cortico%20world%20api-6-8b5cf6)](https://github.com/Pal-AI-Lab/cortico)
 
 给 Coopanion 的桌宠形象接上**人格档位**。
 
@@ -12,7 +17,7 @@
 
 它只往系统前缀的环境段注入文本：不动形象包的美术，不执行形象包的代码，不写 `CONSTITUTION.md`。
 
-*Cortico World · `kind: world` · `api: 6` · `tags: external-setup / experimental` · MIT · Coopanion 0.2.8 实测*
+*Cortico World · `kind: world` · `api: 6` · `tags: companion / internal-state` · MIT · 39 项单测通过、契约校验通过、Coopanion 0.2.8 实测*
 
 ## 目录
 

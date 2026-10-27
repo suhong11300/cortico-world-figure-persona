@@ -1,6 +1,6 @@
 {
   "name": "cortico-world-figure-persona",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "description": "为一个形象挂载多档人设。切换无需重装形象包；人设独立存储，更新形象不覆盖；切换后即时生效。",
   "license": "MIT",
@@ -21,7 +21,9 @@
     "figure-pack",
     "persona",
     "persona-profiles",
-    "system-prompt"
+    "system-prompt",
+    "persona-switch",
+    "figure-json"
   ],
   "engines": {
     "node": ">=22"
